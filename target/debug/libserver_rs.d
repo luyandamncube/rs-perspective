@@ -1,0 +1,1 @@
+/home/mncubel/ht-rs-perspective-redux/target/debug/libserver_rs.rlib: /home/mncubel/ht-rs-perspective-redux/server-rs/src/app.rs /home/mncubel/ht-rs-perspective-redux/server-rs/src/config.rs /home/mncubel/ht-rs-perspective-redux/server-rs/src/handlers.rs /home/mncubel/ht-rs-perspective-redux/server-rs/src/lib.rs

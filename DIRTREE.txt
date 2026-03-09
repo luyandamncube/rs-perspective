@@ -1,0 +1,46 @@
+rust-perspective-streaming/
+├── Cargo.toml
+├── .gitignore
+├── .env.example
+├── README.md
+├── docker-compose.yml
+├── scripts/
+│   ├── verify_perspective_assets.sh
+│   └── vendor_perspective_assets.sh
+├── producer/
+│   ├── Cargo.toml
+│   ├── Cargo.lock
+│   ├── Dockerfile
+│   └── src/
+│       ├── lib.rs
+│       ├── main.rs
+│       └── tick.rs
+└── server-rs/
+    ├── Cargo.toml
+    ├── Cargo.lock
+    ├── Dockerfile
+    ├── src/
+    │   ├── app.rs
+    │   ├── config.rs
+    │   ├── handlers.rs
+    │   ├── lib.rs
+    │   ├── main.rs
+    │   ├── nats_consumer.rs
+    │   ├── perspective.rs
+    │   └── ticks.rs
+    ├── static/
+    │   ├── index.html
+    │   ├── js/
+    │   │   └── .gitkeep
+    │   ├── wasm/
+    │   │   ├── perspective-client.wasm
+    │   │   └── perspective-viewer.wasm
+    │   └── server/
+    │       └── dist/
+    │           └── wasm/
+    │               └── perspective-server.wasm
+    └── tests/
+        ├── health.rs
+        ├── nats_integration.rs
+        ├── static_assets.rs
+        └── websocket.rs
