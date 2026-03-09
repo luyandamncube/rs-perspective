@@ -1,0 +1,40 @@
+# Rust
+target/
+**/target/
+Cargo.lock
+
+# Keep Cargo.lock for binaries if you want reproducible builds.
+# Since this repo is application-focused, you may prefer to TRACK these instead.
+# If so, remove the Cargo.lock line above.
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Editor / OS noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Logs
+*.log
+
+# Python helper script artifacts
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Test / coverage artifacts
+coverage/
+*.profraw
+*.profdata
+
+# Node-style artifacts if asset tooling is added later
+node_modules/
+dist/
+
+# Docker local overrides
+docker-compose.override.yml
