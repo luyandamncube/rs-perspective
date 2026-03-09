@@ -53,4 +53,7 @@ cargo run -p server-rs
 
 curl http://127.0.0.1:8080/health
 curl http://127.0.0.1:8080/
+
+# run together 
+docker compose build --up
 ```
