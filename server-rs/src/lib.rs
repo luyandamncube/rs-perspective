@@ -3,4 +3,5 @@ pub mod app;
 pub mod config;
 pub mod handlers;
 pub mod nats_consumer;
+pub mod perspective;
 pub mod ticks;

@@ -9,7 +9,7 @@ use testcontainers::{
     GenericImage,
 };
 
-use server_rs::app::build_router;
+use server_rs::{app::build_router, perspective::PerspectiveState};
 
 #[tokio::test]
 async fn server_starts_with_nats_and_stays_healthy_after_tick_publish() {
@@ -27,11 +27,18 @@ async fn server_starts_with_nats_and_stays_healthy_after_tick_publish() {
 
     let nats_url = format!("nats://127.0.0.1:{nats_port}");
 
+    let perspective = PerspectiveState::bootstrap()
+        .await
+        .expect("failed to bootstrap perspective state");
+
+    let table = perspective.table.clone();
+
     let consumer_nats_url = nats_url.clone();
     let consumer_subject = "ticks".to_string();
     tokio::spawn(async move {
         if let Err(err) =
-            server_rs::nats_consumer::run_nats_consumer(consumer_nats_url, consumer_subject).await
+            server_rs::nats_consumer::run_nats_consumer(consumer_nats_url, consumer_subject, table)
+                .await
         {
             panic!("NATS consumer task failed: {err}");
         }

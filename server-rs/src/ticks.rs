@@ -37,7 +37,7 @@ pub fn tick_to_row(tick: &Tick) -> Value {
     json!({
         "symbol": tick.symbol,
         "price": tick.price,
-        "size": tick.size,
+        "size": tick.size as i32,
         "ts": tick.ts,
     })
 }

@@ -5,6 +5,7 @@ use server_rs::{
     app::build_router,
     config::AppConfig,
     nats_consumer::run_nats_consumer,
+    perspective::PerspectiveState,
 };
 
 #[tokio::main]
@@ -14,18 +15,23 @@ async fn main() -> anyhow::Result<()> {
     let cfg = AppConfig::from_env();
     let addr = SocketAddr::from(([0, 0, 0, 0], cfg.http_port));
 
+    let perspective = PerspectiveState::bootstrap().await?;
+    tracing::info!("Perspective state initialized");
+
     let nats_url = cfg.nats_url.clone();
     let nats_subject = cfg.nats_subject.clone();
+    let table = perspective.table.clone();
+
+    let _perspective = perspective;
 
     tokio::spawn(async move {
-        if let Err(err) = run_nats_consumer(nats_url, nats_subject).await {
+        if let Err(err) = run_nats_consumer(nats_url, nats_subject, table).await {
             tracing::error!(error = %err, "NATS consumer task failed");
         }
     });
 
     let listener = tokio::net::TcpListener::bind(addr).await?;
     println!("server-rs listening on http://{addr}");
-    tracing::info!("HTTP server ready");
 
     axum::serve(
         listener,
