@@ -50,10 +50,12 @@ async fn server_starts_with_nats_and_stays_healthy_after_tick_publish() {
 
     let addr: SocketAddr = listener.local_addr().expect("failed to resolve listener address");
 
+    let router_server = perspective.server.clone();
+
     let server = tokio::spawn(async move {
         axum::serve(
             listener,
-            build_router().into_make_service_with_connect_info::<SocketAddr>(),
+            build_router(router_server).into_make_service_with_connect_info::<SocketAddr>(),
         )
         .await
         .expect("test HTTP server failed");

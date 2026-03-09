@@ -41,19 +41,31 @@ server-rs/tests/health.rs
 
 ## Run crates
 ```bash
-# run producer
-cargo test -p producer
-cargo run -p producer
+
 
 # run server
 cargo test -p server-rs
 cargo run -p server-rs
 
+# run producer
+cargo test -p producer
+cargo run -p producer
+
+# run nats
+nats-server -m 8222
+
 # health check
 
-curl http://127.0.0.1:8080/health
+curl http://127.0.0.1:8080/health   
 curl http://127.0.0.1:8080/
-
+curl http://127.0.0.1:8222/varz     # nats 
 # run together 
 docker compose build --up
+```
+
+## Vendor Assets
+```bash
+chmod +x scripts/vendor_perspective_assets.sh scripts/verify_perspective_assets.sh
+./scripts/vendor_perspective_assets.sh 4.2.0
+./scripts/verify_perspective_assets.sh
 ```

@@ -21,8 +21,7 @@ async fn main() -> anyhow::Result<()> {
     let nats_url = cfg.nats_url.clone();
     let nats_subject = cfg.nats_subject.clone();
     let table = perspective.table.clone();
-
-    let _perspective = perspective;
+    let server = perspective.server.clone();
 
     tokio::spawn(async move {
         if let Err(err) = run_nats_consumer(nats_url, nats_subject, table).await {
@@ -35,7 +34,7 @@ async fn main() -> anyhow::Result<()> {
 
     axum::serve(
         listener,
-        build_router().into_make_service_with_connect_info::<SocketAddr>(),
+        build_router(server).into_make_service_with_connect_info::<SocketAddr>(),
     )
     .await?;
 
