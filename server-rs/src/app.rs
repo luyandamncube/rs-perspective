@@ -6,7 +6,8 @@ use tower_http::services::ServeDir;
 use crate::handlers::{health, ws_info};
 
 pub fn build_router(perspective_server: Server) -> Router {
-    let static_dir = concat!(env!("CARGO_MANIFEST_DIR"), "/static");
+    let static_dir = std::env::var("STATIC_DIR")
+    .unwrap_or_else(|_| format!("{}/static", env!("CARGO_MANIFEST_DIR")));
 
     Router::new()
         .route("/health", get(health))

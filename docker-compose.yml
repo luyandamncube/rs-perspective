@@ -1,29 +1,40 @@
-version: "3.9"
-
 services:
   nats:
     image: nats:2.10
     ports:
       - "4222:4222"
-      - "8222:8222"
 
   server-rs:
     build:
-      context: ./server-rs
-    environment:
-      HTTP_PORT: "8080"
-      NATS_URL: "nats://nats:4222"
-      NATS_SUBJECT: "ticks"
+      context: .
+      dockerfile: server-rs/Dockerfile
     depends_on:
       - nats
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    environment:
+      STATIC_DIR: /app/static
+      NATS_URL: nats://nats:4222
+      NATS_SUBJECT: ticks
+      HTTP_PORT: 3000
+      BATCH_FLUSH_MS: 50
+      MAX_BATCH_SIZE: 256
+      QUEUE_CAPACITY: 4096
+      PERSPECTIVE_TABLE_LIMIT: 5000
+      RUST_LOG: info
     ports:
-      - "8080:8080"
+      - "3000:3000"
 
   producer:
     build:
-      context: ./producer
-    environment:
-      NATS_URL: "nats://nats:4222"
-      NATS_SUBJECT: "ticks"
+      context: .
+      dockerfile: producer/Dockerfile
     depends_on:
       - nats
+    environment:
+      NATS_URL: nats://nats:4222
+      NATS_SUBJECT: ticks
+      TICK_INTERVAL: 1000

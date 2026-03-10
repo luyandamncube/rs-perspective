@@ -1,45 +1,68 @@
-rust-perspective-streaming/
+rust-perspective/
+├── Cargo.lock
 ├── Cargo.toml
-├── .gitignore
-├── .env.example
+├── DIRTREE.txt
 ├── README.md
 ├── docker-compose.yml
-├── scripts/
-│   ├── verify_perspective_assets.sh
-│   └── vendor_perspective_assets.sh
-├── producer/
-│   ├── Cargo.toml
-│   ├── Cargo.lock
-│   ├── Dockerfile
-│   └── src/
-│       ├── lib.rs
-│       ├── main.rs
-│       └── tick.rs
-└── server-rs/
-    ├── Cargo.toml
+├── docs
+│   ├── README.md
+│   └── phases
+│       ├── PHASE_0_FOUNDATION.md
+│       ├── PHASE_1_TICKS_NATS.md
+│       ├── PHASE_2_LIVE_TABLES.md
+│       └── PHASE_3_POLISH.md
+├── producer
+│   ├── Cargo.lock
+│   ├── Cargo.toml
+│   ├── Dockerfile
+│   └── src
+│       ├── lib.rs
+│       ├── main.rs
+│       └── tick.rs
+├── scaffhold_from_tree.py
+├── scripts
+│   ├── vendor_perspective_assets.sh
+│   └── verify_perspective_assets.sh
+└── server-rs
     ├── Cargo.lock
+    ├── Cargo.toml
     ├── Dockerfile
-    ├── src/
-    │   ├── app.rs
-    │   ├── config.rs
-    │   ├── handlers.rs
-    │   ├── lib.rs
-    │   ├── main.rs
-    │   ├── nats_consumer.rs
-    │   ├── perspective.rs
-    │   └── ticks.rs
-    ├── static/
-    │   ├── index.html
-    │   ├── js/
-    │   │   └── .gitkeep
-    │   ├── wasm/
-    │   │   ├── perspective-client.wasm
-    │   │   └── perspective-viewer.wasm
-    │   └── server/
-    │       └── dist/
-    │           └── wasm/
-    │               └── perspective-server.wasm
-    └── tests/
+    ├── src
+    │   ├── app.rs
+    │   ├── config.rs
+    │   ├── handlers.rs
+    │   ├── lib.rs
+    │   ├── main.rs
+    │   ├── nats_consumer.rs
+    │   ├── perspective.rs
+    │   └── ticks.rs
+    ├── static
+    │   ├── index.css
+    │   ├── index.html
+    │   ├── js
+    │   │   ├── perspective-client.js
+    │   │   ├── perspective-client.wasm
+    │   │   ├── perspective-server.worker.js
+    │   │   ├── perspective-viewer.js
+    │   │   ├── perspective-viewer.wasm
+    │   │   └── snippets
+    │   │       └── perspective-viewer-1586156e058be573
+    │   ├── perspective
+    │   │   ├── client
+    │   │   │   ├── esm
+    │   │   │   └── wasm
+    │   │   ├── viewer
+    │   │   │   ├── cdn
+    │   │   │   └── wasm
+    │   │   └── viewer-datagrid
+    │   │       └── cdn
+    │   ├── server
+    │   │   └── dist
+    │   │       └── wasm
+    │   ├── streaming.js
+    │   ├── streaming[WS].js
+    │   └── wasm
+    └── tests
         ├── health.rs
         ├── nats_integration.rs
         ├── static_assets.rs

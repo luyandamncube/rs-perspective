@@ -1,15 +1,16 @@
 // server-rs\src\nats_consumer.rs
 use anyhow::Result;
 use futures_util::StreamExt;
-use perspective::client::Table;
+use tokio::sync::mpsc::Sender;
 use tracing::{error, info, warn};
 
-use crate::{
-    perspective::apply_tick,
-    ticks::{parse_tick, tick_to_row},
-};
+use crate::models::{parse_tick, Tick};
 
-pub async fn run_nats_consumer(nats_url: String, subject: String, table: Table) -> Result<()> {
+pub async fn run_nats_consumer(
+    nats_url: String,
+    subject: String,
+    tx: Sender<Tick>,
+) -> Result<()> {
     info!("connecting to NATS at {}", nats_url);
 
     let client = async_nats::connect(&nats_url).await?;
@@ -20,9 +21,11 @@ pub async fn run_nats_consumer(nats_url: String, subject: String, table: Table) 
     while let Some(message) = subscriber.next().await {
         match parse_tick(message.payload.as_ref()) {
             Ok(tick) => {
-                apply_tick(&table, &tick).await?;
-                let row = tick_to_row(&tick);
-                info!(subject = %subject, tick = %row, "validated tick applied");
+                tracing::info!(symbol = %tick.symbol, "tick received from NATS");
+                if tx.send(tick).await.is_err() {
+                    error!("tick channel closed; stopping consumer");
+                    break;
+                }
             }
             Err(err) => {
                 warn!(subject = %subject, error = %err, "invalid tick skipped");

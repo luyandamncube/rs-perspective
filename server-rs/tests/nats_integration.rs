@@ -8,8 +8,14 @@ use testcontainers::{
     runners::AsyncRunner,
     GenericImage,
 };
+use tokio::sync::mpsc;
 
-use server_rs::{app::build_router, perspective::PerspectiveState};
+use server_rs::{
+    app::build_router,
+    ingest::nats_consumer::run_nats_consumer,
+    pipeline::{batcher::run_batcher, flush_policy::FlushPolicy},
+    sinks::perspective::PerspectiveState,
+};
 
 #[tokio::test]
 async fn server_starts_with_nats_and_stays_healthy_after_tick_publish() {
@@ -27,20 +33,25 @@ async fn server_starts_with_nats_and_stays_healthy_after_tick_publish() {
 
     let nats_url = format!("nats://127.0.0.1:{nats_port}");
 
-    let perspective = PerspectiveState::bootstrap()
+    let perspective = PerspectiveState::bootstrap(Some(5000))
         .await
         .expect("failed to bootstrap perspective state");
 
-    let table = perspective.table.clone();
+    let (tx, rx) = mpsc::channel(1024);
 
     let consumer_nats_url = nats_url.clone();
     let consumer_subject = "ticks".to_string();
     tokio::spawn(async move {
-        if let Err(err) =
-            server_rs::nats_consumer::run_nats_consumer(consumer_nats_url, consumer_subject, table)
-                .await
-        {
+        if let Err(err) = run_nats_consumer(consumer_nats_url, consumer_subject, tx).await {
             panic!("NATS consumer task failed: {err}");
+        }
+    });
+
+    let batch_table = perspective.table.clone();
+    let policy = FlushPolicy::new(Duration::from_millis(50), 256);
+    tokio::spawn(async move {
+        if let Err(err) = run_batcher(rx, batch_table, policy).await {
+            panic!("batcher task failed: {err}");
         }
     });
 
@@ -48,7 +59,9 @@ async fn server_starts_with_nats_and_stays_healthy_after_tick_publish() {
         .await
         .expect("failed to bind test listener");
 
-    let addr: SocketAddr = listener.local_addr().expect("failed to resolve listener address");
+    let addr: SocketAddr = listener
+        .local_addr()
+        .expect("failed to resolve listener address");
 
     let router_server = perspective.server.clone();
 
@@ -80,7 +93,7 @@ async fn server_starts_with_nats_and_stays_healthy_after_tick_publish() {
         .expect("failed to connect publisher to test NATS");
 
     let payload = serde_json::json!({
-        "symbol": "AAPL",
+        "symbol": "AAPL.N",
         "price": 101.25,
         "size": 50,
         "ts": "2026-03-09T06:30:00Z"
