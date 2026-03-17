@@ -28,14 +28,36 @@ rust-perspective/
     ├── Cargo.toml
     ├── Dockerfile
     ├── src
+    │   ├── aggregations
+    │   │   ├── bars.rs
+    │   │   ├── latest.rs
+    │   │   └── mod.rs
     │   ├── app.rs
     │   ├── config.rs
-    │   ├── handlers.rs
+    │   ├── handlers
+    │   │   ├── health.rs
+    │   │   ├── mod.rs
+    │   │   └── ws_info.rs
+    │   ├── ingest
+    │   │   ├── mod.rs
+    │   │   └── nats_consumer.rs
     │   ├── lib.rs
     │   ├── main.rs
-    │   ├── nats_consumer.rs
-    │   ├── perspective.rs
-    │   └── ticks.rs
+    │   ├── models
+    │   │   ├── mod.rs
+    │   │   ├── row.rs
+    │   │   └── tick.rs
+    │   ├── pipeline
+    │   │   ├── backpressure.rs
+    │   │   ├── batcher.rs
+    │   │   ├── flush_policy.rs
+    │   │   └── mod.rs
+    │   ├── sinks
+    │   │   ├── mod.rs
+    │   │   └── perspective.rs
+    │   └── transforms
+    │       ├── demo_rows.rs
+    │       └── mod.rs
     ├── static
     │   ├── index.css
     │   ├── index.html
@@ -44,26 +66,35 @@ rust-perspective/
     │   │   ├── perspective-client.wasm
     │   │   ├── perspective-server.worker.js
     │   │   ├── perspective-viewer.js
-    │   │   ├── perspective-viewer.wasm
-    │   │   └── snippets
-    │   │       └── perspective-viewer-1586156e058be573
+    │   │   └── perspective-viewer.wasm
     │   ├── perspective
     │   │   ├── client
     │   │   │   ├── esm
+    │   │   │   │   ├── perspective-client.wasm
+    │   │   │   │   ├── perspective-server.worker.js
+    │   │   │   │   └── perspective.js
     │   │   │   └── wasm
+    │   │   │       ├── perspective-client.wasm
+    │   │   │       └── perspective-js.wasm
     │   │   ├── viewer
     │   │   │   ├── cdn
+    │   │   │   │   └── perspective-viewer.js
     │   │   │   └── wasm
+    │   │   │       ├── perspective-viewer.js
+    │   │   │       └── perspective-viewer.wasm
     │   │   └── viewer-datagrid
     │   │       └── cdn
+    │   │           └── perspective-viewer-datagrid.js
     │   ├── server
     │   │   └── dist
     │   │       └── wasm
+    │   │           └── perspective-server.wasm
     │   ├── streaming.js
-    │   ├── streaming[WS].js
+    │   ├── streaming[DEFAULT].js
     │   └── wasm
     └── tests
         ├── health.rs
         ├── nats_integration.rs
+        ├── pipeline_integration.rs
         ├── static_assets.rs
         └── websocket.rs

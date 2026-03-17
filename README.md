@@ -1,6 +1,6 @@
 ## Root worksapce manifest structure
 ```bash
-tree -L 5 -I ".git|node_modules|__pycache__|target"
+tree -L 6 -I ".git|node_modules|__pycache__|target|snippets"
 
 rust-perspective-streaming/
 ├── Cargo.toml          # workspace only
